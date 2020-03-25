@@ -7,5 +7,7 @@ import (
 )
 
 func main() {
-	fmt.Println(utils.Sqrt(4))
+	sqrt, iterations := utils.Sqrt(4)
+
+	fmt.Printf("square-root: %f | iterations: %d", sqrt, iterations)
 }
