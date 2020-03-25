@@ -1,9 +1,11 @@
 package utils
 
-import "math"
+import (
+	"math"
+)
 
 // Sqrt - Finds the square-root of a given int
-func Sqrt(x float64) (float64, string, int) {
+func Sqrt(x float64) (float64, int) {
 	z := float64(1)
 	itr := 0
 
@@ -11,13 +13,18 @@ func Sqrt(x float64) (float64, string, int) {
 		temp := z
 
 		if temp -= adjustPrecision(temp, x); roundFloat(z, 11) == roundFloat(temp, 11) {
-			return z, "-", itr
+			// output, _ := fmt.Printf("square-root: %f - iterations: %v", z, itr)
+			// return output
+			return z, itr
 		}
 
 		z -= adjustPrecision(z, x)
 		itr++
 	}
-	return z, "-", itr
+	// output, _ := fmt.Printf("square-root: %f - iterations: %v", z, itr)
+	// return output
+	return z, itr
+
 }
 
 func adjustPrecision(v, x float64) float64 {
