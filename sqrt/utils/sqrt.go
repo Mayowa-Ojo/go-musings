@@ -1,11 +1,23 @@
 package utils
 
 import (
+	"fmt"
 	"math"
 )
 
+type ErrNegativeSqrt float64
+
+func (e ErrNegativeSqrt) Error() string {
+	return fmt.Sprintf("cannot sqrt negative number: %f", float64(e))
+}
+
 // Sqrt - Finds the square-root of a given int
-func Sqrt(x float64) (float64, int) {
+func Sqrt(x float64) (float64, int, error) {
+	var err ErrNegativeSqrt
+	if x < 0 {
+		return 0, 0, err
+	}
+
 	z := float64(1)
 	itr := 0
 
@@ -15,7 +27,7 @@ func Sqrt(x float64) (float64, int) {
 		if temp -= adjustPrecision(temp, x); roundFloat(z, 11) == roundFloat(temp, 11) {
 			// output, _ := fmt.Printf("square-root: %f - iterations: %v", z, itr)
 			// return output
-			return z, itr
+			return z, itr, nil
 		}
 
 		z -= adjustPrecision(z, x)
@@ -23,7 +35,7 @@ func Sqrt(x float64) (float64, int) {
 	}
 	// output, _ := fmt.Printf("square-root: %f - iterations: %v", z, itr)
 	// return output
-	return z, itr
+	return z, itr, nil
 
 }
 

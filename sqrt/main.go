@@ -7,7 +7,12 @@ import (
 )
 
 func main() {
-	sqrt, iterations := utils.Sqrt(4)
+	sqrt, iterations, err := utils.Sqrt(-4)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
 
 	fmt.Printf("square-root: %f | iterations: %d", sqrt, iterations)
 }
