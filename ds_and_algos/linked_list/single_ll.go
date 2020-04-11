@@ -14,6 +14,7 @@ import (
 // list.Append(50)
 
 // list.InsertAfter(3, 45)
+// _ := list.RemoveAt(3)
 // index, _ := list.Index(40)
 // list.PrintList()
 // fmt.Printf("index: %v", index)
@@ -27,14 +28,14 @@ type LinkedList struct {
 
 // Node - describes a Node type
 type Node struct {
-	data item
+	data DataInt
 	next *Node
 }
 
-type item int
+type DataInt int
 
 // Append - append a node to the end of a linked list
-func (l *LinkedList) Append(n item) {
+func (l *LinkedList) Append(n DataInt) {
 	node := Node{n, nil}
 
 	if l.IsEmpty() {
@@ -76,7 +77,7 @@ func (l *LinkedList) FetchNthNode(i int) *Node {
 }
 
 // InsertAfter - insert a node after the current node at index [i]
-func (l *LinkedList) InsertAfter(i int, n item) error {
+func (l *LinkedList) InsertAfter(i int, n DataInt) error {
 	if i < 0 || i > l.size {
 		return errors.New("index out of bounds")
 	}
@@ -103,12 +104,28 @@ func (l *LinkedList) InsertAfter(i int, n item) error {
 }
 
 // RemoveAt - removes node at index [i]
-func (l *LinkedList) RemoveAt(i int) {
+func (l *LinkedList) RemoveAt(i int) error {
+	if i < 0 || i > l.size {
+		return errors.New("index out of bounds")
+	}
 
+	if i == 0 {
+		newHead := l.head.next
+		l.head = newHead
+		l.size--
+		return nil
+	}
+
+	prevNode := l.FetchNthNode(i - 1)
+	nextNode := l.FetchNthNode(i + 1)
+
+	prevNode.next = nextNode
+
+	return nil
 }
 
 // Index - retrieves the first index that matches node [n]
-func (l *LinkedList) Index(n item) (int, error) {
+func (l *LinkedList) Index(n DataInt) (int, error) {
 	msg := "cannot retrieve head, linked list is empty"
 
 	if l.IsEmpty() {
