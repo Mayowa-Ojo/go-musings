@@ -104,10 +104,10 @@ func (l *LinkedList) InsertAfter(i int, n DataInt) error {
 	// fetch node occupying cuurrent index - i
 	prevNode := l.FetchNthNode(i)
 
-	newNode.next = prevNode.next // set the new node to point to the previous next node
-	prevNode.next = &newNode // set preceding node next field to point to new node
+	newNode.next = prevNode.next    // set the new node to point to the previous next node
+	prevNode.next = &newNode        // set preceding node next field to point to new node
 	(*newNode.next).prev = &newNode // set next node prev field to point to new node
-	newNode.prev = prevNode // set new node prev field to point to preceding node
+	newNode.prev = prevNode         // set new node prev field to point to preceding node
 	l.size++
 
 	return nil
