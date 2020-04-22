@@ -175,5 +175,32 @@ func updateBookHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func deleteBookHandler(w http.ResponseWriter, r *http.Request) {
+	params := mux.Vars(r)
+	id := params["id"]
+	var index *int
 
+	for i, v := range books.Data {
+		if v.ID == id {
+			index = &i
+			break
+		}
+	}
+
+	if index == nil {
+		w.Write([]byte("Book doesn't exist..."))
+		return
+	}
+
+	booksSlice := books.Data[:]
+	booksSlice = append(booksSlice[:*index], booksSlice[*index+1:len(booksSlice)]...)
+
+	b, err := json.Marshal(booksSlice)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(b)
 }
