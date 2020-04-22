@@ -100,7 +100,17 @@ func getBookHandler(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "Book with id: '%v' not found\n", id)
 		return
 	}
-	fmt.Fprintf(w, "Title: %v | Author: %v\n", book.Title, book.Author)
+
+	b, err := json.Marshal(book)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(b)
+	// fmt.Fprintf(w, "Title: %v | Author: %v\n", book.Title, book.Author)
 }
 
 func createBookHandler(w http.ResponseWriter, r *http.Request) {
@@ -126,7 +136,42 @@ func createBookHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateBookHandler(w http.ResponseWriter, r *http.Request) {
+	var book Book
+	update := Book{}
 
+	err := json.NewDecoder(r.Body).Decode(&update)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	params := mux.Vars(r)
+	id := params["id"]
+	// n, _ := strconv.ParseInt(id, 10, 64) // convert id to int
+
+	for i, v := range books.Data {
+		if v.ID == id {
+			book = books.Data[i]
+			update.ID = id
+			books.Data[i] = update
+			break
+		}
+	}
+
+	if book.ID == "" {
+		fmt.Fprintf(w, "Book with id: '%v' not found\n", id)
+		return
+	}
+
+	b, err := json.Marshal(books)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(b)
 }
 
 func deleteBookHandler(w http.ResponseWriter, r *http.Request) {
