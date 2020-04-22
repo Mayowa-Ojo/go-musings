@@ -87,14 +87,7 @@ func getBookHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
 
-	var book Book
-
-	for i, v := range books.Data {
-		if v.ID == id {
-			book = books.Data[i]
-			break
-		}
-	}
+	book, _ := fetchBook(id)
 
 	if book.ID == "" {
 		fmt.Fprintf(w, "Book with id: '%v' not found\n", id)
@@ -136,7 +129,6 @@ func createBookHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateBookHandler(w http.ResponseWriter, r *http.Request) {
-	var book Book
 	update := Book{}
 
 	err := json.NewDecoder(r.Body).Decode(&update)
@@ -149,19 +141,15 @@ func updateBookHandler(w http.ResponseWriter, r *http.Request) {
 	id := params["id"]
 	// n, _ := strconv.ParseInt(id, 10, 64) // convert id to int
 
-	for i, v := range books.Data {
-		if v.ID == id {
-			book = books.Data[i]
-			update.ID = id
-			books.Data[i] = update
-			break
-		}
-	}
+	book, index := fetchBook(id)
 
 	if book.ID == "" {
 		fmt.Fprintf(w, "Book with id: '%v' not found\n", id)
 		return
 	}
+
+	update.ID = id
+	books.Data[*index] = update
 
 	b, err := json.Marshal(books)
 
@@ -177,14 +165,8 @@ func updateBookHandler(w http.ResponseWriter, r *http.Request) {
 func deleteBookHandler(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 	id := params["id"]
-	var index *int
 
-	for i, v := range books.Data {
-		if v.ID == id {
-			index = &i
-			break
-		}
-	}
+	_, index := fetchBook(id)
 
 	if index == nil {
 		w.Write([]byte("Book doesn't exist..."))
@@ -203,4 +185,17 @@ func deleteBookHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	w.Write(b)
+}
+
+func fetchBook(id string) (b Book, index *int) {
+
+	for i, v := range books.Data {
+		if v.ID == id {
+			b = books.Data[i]
+			index = &i
+			break
+		}
+	}
+
+	return b, index
 }
