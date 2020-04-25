@@ -33,10 +33,13 @@ func main() {
 
 	// rows, err := db.Query("SELECT * FROM books")
 	// books, err := queryRows(db)
-	data := book{}
-	data.title = `The Subtle Art of Not Giving a F*ck`
-	data.author = `Mark Manson`
-	err = insertRow(db, data)
+	// -------------------------------------------------
+	// data := book{}
+	// data.title = `The Subtle Art of Not Giving a F*ck`
+	// data.author = `Mark Manson`
+	// err = insertRow(db, data)
+	// -------------------------------------------------
+	err = createTable(db, "authors")
 
 	if err != nil {
 		log.Fatal(err)
@@ -57,18 +60,19 @@ func connectDB(dbType, conn string) (*sql.DB, error) {
 	return db, nil
 }
 
-func (s *service) createTable() error {
-	db := s.db
-
+func createTable(db *sql.DB, table string) error {
 	query := `
-		CREATE TABLE books (
+		CREATE TABLE %s (
 			id serial PRIMARY KEY,
 			title VARCHAR (150) NOT NULL,
 			author VARCHAR (100) NOT NULL,
 			created_at TIMESTAMP NOT NULL
-		);`
+		);
+	`
 
-	_, err := db.Exec(query)
+	q := fmt.Sprintf(query, table)
+
+	_, err := db.Exec(q)
 
 	if err != nil {
 		return err
