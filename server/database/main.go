@@ -1,4 +1,4 @@
-package main
+package database
 
 import (
 	"database/sql"
@@ -10,18 +10,20 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// DB -
-type service struct {
+// Service - holds a DB type
+type Service struct {
 	db *sql.DB
 }
 
-type book struct {
-	id        int
-	title     string
-	author    string
-	createdAt time.Time
+// Book - describes a book structure
+type Book struct {
+	ID        int
+	Title     string
+	Author    string
+	CreatedAt time.Time
 }
 
+/*
 func main() {
 	// s := service{}
 	connStr := "postgres://postgres:adebayor@localhost/test?sslmode=disable"
@@ -49,8 +51,10 @@ func main() {
 
 	fmt.Printf("book: %v\n", book.createdAt)
 }
+*/
 
-func connectDB(dbType, conn string) (*sql.DB, error) {
+// ConnectDB - connect to DB
+func ConnectDB(dbType, conn string) (*sql.DB, error) {
 	db, err := sql.Open(dbType, conn)
 
 	if err != nil {
@@ -62,7 +66,8 @@ func connectDB(dbType, conn string) (*sql.DB, error) {
 	return db, nil
 }
 
-func createTable(db *sql.DB, table string) error {
+// CreateTable - create a table in DB
+func CreateTable(db *sql.DB, table string) error {
 	query := `
 		CREATE TABLE %s (
 			id serial PRIMARY KEY,
@@ -83,9 +88,10 @@ func createTable(db *sql.DB, table string) error {
 	return nil
 }
 
-func insertRow(db *sql.DB, data book) error {
-	title := data.title
-	author := data.author
+// InsertRow - insert row into table
+func InsertRow(db *sql.DB, data Book) error {
+	title := data.Title
+	author := data.Author
 
 	query := fmt.Sprintf(`INSERT INTO books (title, author, created_at) VALUES ('%s', '%s', NOW());`, title, author)
 
@@ -99,8 +105,9 @@ func insertRow(db *sql.DB, data book) error {
 	return nil
 }
 
-func queryRows(db *sql.DB) ([]book, error) {
-	var books []book
+// QueryRows - fetch all rows from table
+func QueryRows(db *sql.DB) ([]Book, error) {
+	var books []Book
 	query := `SELECT * FROM books`
 
 	rows, err := db.Query(query)
@@ -111,9 +118,9 @@ func queryRows(db *sql.DB) ([]book, error) {
 	}
 
 	for rows.Next() {
-		var b book
+		var b Book
 
-		err := rows.Scan(&b.id, &b.title, &b.author, &b.createdAt)
+		err := rows.Scan(&b.ID, &b.Title, &b.Author, &b.CreatedAt)
 
 		if err != nil {
 			log.Fatal(err)
@@ -132,14 +139,15 @@ func queryRows(db *sql.DB) ([]book, error) {
 	return books, nil
 }
 
-func queryRow(db *sql.DB, table string, id int) (book, error) {
+// QueryRow - fetch a single row from table
+func QueryRow(db *sql.DB, table string, id int) (Book, error) {
 	// var (
 	// 	title     string
 	// 	author    string
 	// 	createdAt time.Time
 	// )
 
-	var b book
+	var b Book
 
 	query := `SELECT * FROM %s WHERE id = %d`
 	q := fmt.Sprintf(query, table, id) // format query string
@@ -151,7 +159,7 @@ func queryRow(db *sql.DB, table string, id int) (book, error) {
 	}
 
 	_ = row.Next()
-	err = row.Scan(&b.id, &b.title, &b.author, &b.createdAt)
+	err = row.Scan(&b.ID, &b.Title, &b.Author, &b.CreatedAt)
 
 	if err != nil {
 		return b, err
