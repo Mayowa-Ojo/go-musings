@@ -40,12 +40,14 @@ func main() {
 	// err = insertRow(db, data)
 	// -------------------------------------------------
 	err = createTable(db, "authors")
+	// -------------------------------------------------
+	book, err := queryRow(db, "books", 4)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// fmt.Printf("books: %v\n", books)
+	fmt.Printf("book: %v\n", book.createdAt)
 }
 
 func connectDB(dbType, conn string) (*sql.DB, error) {
@@ -124,18 +126,36 @@ func queryRows(db *sql.DB) ([]book, error) {
 	err = rows.Err()
 
 	if err != nil {
-
+		return nil, err
 	}
 
 	return books, nil
 }
 
-func queryRow(db *sql.DB) (book, error) {
+func queryRow(db *sql.DB, table string, id int) (book, error) {
 	// var (
 	// 	title     string
 	// 	author    string
 	// 	createdAt time.Time
 	// )
 
-	return book{}, nil
+	var b book
+
+	query := `SELECT * FROM %s WHERE id = %d`
+	q := fmt.Sprintf(query, table, id) // format query string
+
+	row, err := db.Query(q)
+
+	if err != nil {
+		return b, err
+	}
+
+	_ = row.Next()
+	err = row.Scan(&b.id, &b.title, &b.author, &b.createdAt)
+
+	if err != nil {
+		return b, err
+	}
+
+	return b, nil
 }
