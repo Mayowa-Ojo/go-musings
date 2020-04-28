@@ -5,3 +5,4 @@ structs/
 reduce/
 template_string/
 *.tmp
+.env
