@@ -4,54 +4,11 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
-	"time"
 
+	models "github.com/go-musings/server/database/models"
 	// import pg driver
 	_ "github.com/lib/pq"
 )
-
-// Service - holds a DB type
-type Service struct {
-	db *sql.DB
-}
-
-// Book - describes a book structure
-type Book struct {
-	ID        int
-	Title     string
-	Author    string
-	CreatedAt time.Time
-}
-
-/*
-func main() {
-	// s := service{}
-	connStr := "postgres://postgres:adebayor@localhost/test?sslmode=disable"
-
-	db, err := connectDB("postgres", connStr)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	// rows, err := db.Query("SELECT * FROM books")
-	// books, err := queryRows(db)
-	// -------------------------------------------------
-	// data := book{}
-	// data.title = `The Subtle Art of Not Giving a F*ck`
-	// data.author = `Mark Manson`
-	// err = insertRow(db, data)
-	// -------------------------------------------------
-	err = createTable(db, "authors")
-	// -------------------------------------------------
-	book, err := queryRow(db, "books", 4)
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	fmt.Printf("book: %v\n", book.createdAt)
-}
-*/
 
 // ConnectDB - connect to DB
 func ConnectDB(dbType, conn string) (*sql.DB, error) {
@@ -88,8 +45,8 @@ func CreateTable(db *sql.DB, table string) error {
 	return nil
 }
 
-// InsertRow - insert row into table
-func InsertRow(db *sql.DB, data Book) error {
+// QueryInsertRow - insert row into table
+func QueryInsertRow(db *sql.DB, data models.Book) error {
 	title := data.Title
 	author := data.Author
 
@@ -101,13 +58,12 @@ func InsertRow(db *sql.DB, data Book) error {
 		return err
 	}
 
-	fmt.Println("row created...")
 	return nil
 }
 
 // QueryRows - fetch all rows from table
-func QueryRows(db *sql.DB) ([]Book, error) {
-	var books []Book
+func QueryRows(db *sql.DB) ([]models.Book, error) {
+	var books []models.Book
 	query := `SELECT * FROM books`
 
 	rows, err := db.Query(query)
@@ -118,7 +74,7 @@ func QueryRows(db *sql.DB) ([]Book, error) {
 	}
 
 	for rows.Next() {
-		var b Book
+		var b models.Book
 
 		err := rows.Scan(&b.ID, &b.Title, &b.Author, &b.CreatedAt)
 
@@ -140,14 +96,8 @@ func QueryRows(db *sql.DB) ([]Book, error) {
 }
 
 // QueryRow - fetch a single row from table
-func QueryRow(db *sql.DB, table string, id int) (Book, error) {
-	// var (
-	// 	title     string
-	// 	author    string
-	// 	createdAt time.Time
-	// )
-
-	var b Book
+func QueryRow(db *sql.DB, table string, id int) (models.Book, error) {
+	var b models.Book
 
 	query := `SELECT * FROM %s WHERE id = %d`
 	q := fmt.Sprintf(query, table, id) // format query string
@@ -166,4 +116,22 @@ func QueryRow(db *sql.DB, table string, id int) (Book, error) {
 	}
 
 	return b, nil
+}
+
+// QueryUpdateRow -
+func QueryUpdateRow(db *sql.DB, id int, update models.Book) error {
+	query := `
+		UPDATE books
+		SET title = 'Green'
+		WHERE id = 9;
+	`
+	q := fmt.Sprintf(query)
+
+	_, err := db.Exec(q)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
