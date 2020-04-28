@@ -10,7 +10,6 @@ import (
 
 	"github.com/go-musings/server/database"
 	models "github.com/go-musings/server/database/models"
-	"github.com/go-musings/server/utils"
 	"github.com/gorilla/mux"
 )
 
@@ -96,12 +95,12 @@ func UpdateBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		log.Fatal(err)
 	}
 
-	err = database.QueryUpdateRow(db, idInt, update)
+	err = database.QueryUpdateRow(db, idInt, "books", update)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	b, err := json.Marshal(books)
+	b, err := json.Marshal(update)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -115,18 +114,9 @@ func UpdateBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 func DeleteBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	params := mux.Vars(r)
 	id := params["id"]
+	idInt, _ := strconv.Atoi(id)
 
-	_, index := utils.FetchBook(id)
-
-	if index == nil {
-		w.Write([]byte("Book doesn't exist..."))
-		return
-	}
-
-	booksSlice := books.Data[:]
-	booksSlice = append(booksSlice[:*index], booksSlice[*index+1:len(booksSlice)]...)
-
-	b, err := json.Marshal(booksSlice)
+	err := database.QueryDeleteRow(db, idInt, "books")
 
 	if err != nil {
 		log.Fatal(err)
@@ -134,5 +124,5 @@ func DeleteBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(b)
+	w.Write([]byte("book successfully deleted..."))
 }
