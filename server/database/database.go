@@ -119,13 +119,27 @@ func QueryRow(db *sql.DB, table string, id int) (models.Book, error) {
 }
 
 // QueryUpdateRow -
-func QueryUpdateRow(db *sql.DB, id int, update models.Book) error {
+func QueryUpdateRow(db *sql.DB, id int, table string, update models.Book) error {
 	query := `
-		UPDATE books
-		SET title = 'Green'
-		WHERE id = 9;
+		UPDATE %s
+		SET title = '%s'
+		WHERE id = %d;
 	`
-	q := fmt.Sprintf(query)
+	q := fmt.Sprintf(query, table, update.Title, id)
+
+	_, err := db.Exec(q)
+
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// QueryDeleteRow -
+func QueryDeleteRow(db *sql.DB, id int, table string) error {
+	query := "DELETE FROM %s WHERE id = %d"
+	q := fmt.Sprintf(query, table, id)
 
 	_, err := db.Exec(q)
 
