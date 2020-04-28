@@ -10,17 +10,25 @@ import (
 	_ "github.com/lib/pq"
 )
 
+var handle *sql.DB
+
 // ConnectDB - connect to DB
-func ConnectDB(dbType, conn string) (*sql.DB, error) {
+func ConnectDB(dbType, conn string) error {
 	db, err := sql.Open(dbType, conn)
 
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	fmt.Println("[x] --psql: database connected...")
+	handle = db
 
-	return db, nil
+	return nil
+}
+
+// GetDB - return db connection handle
+func GetDB() *sql.DB {
+	return handle
 }
 
 // CreateTable - create a table in DB
