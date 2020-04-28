@@ -1,16 +1,36 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-musings/server/database"
 	"github.com/go-musings/server/handlers"
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
+)
+
+func init() {
+	// load .env file
+	err := godotenv.Load()
+
+	if err != nil {
+		fmt.Println("env file not found")
+		os.Exit(1)
+	}
+}
+
+var (
+	pgUser     = os.Getenv("PG_USER")
+	pgPassword = os.Getenv("PG_PASSWORD")
+	pgDatabase = os.Getenv("PG_DATABASE")
 )
 
 func main() {
-	err := database.ConnectDB("postgres", "postgres://mayor:adebayor@localhost/test")
+	connString := fmt.Sprintf("postgres://%s:%s@localhost/%s", pgUser, pgPassword, pgDatabase)
+	err := database.ConnectDB("postgres", connString)
 
 	if err != nil {
 		log.Fatal(err)
