@@ -1,7 +1,6 @@
 package handlers
 
 import (
-	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -19,7 +18,9 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GetBooksHandler -
-func GetBooksHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetBooksHandler(w http.ResponseWriter, r *http.Request) {
+	db := database.GetDB()
+
 	books, err := database.QueryRows(db)
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +37,9 @@ func GetBooksHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 // GetBookHandler -
-func GetBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func GetBookHandler(w http.ResponseWriter, r *http.Request) {
+	db := database.GetDB()
+
 	params := mux.Vars(r)
 	id := params["id"]
 	idInt, _ := strconv.Atoi(id)
@@ -60,7 +63,9 @@ func GetBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 // CreateBookHandler -
-func CreateBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func CreateBookHandler(w http.ResponseWriter, r *http.Request) {
+	db := database.GetDB()
+
 	b := models.Book{}
 
 	err := json.NewDecoder(r.Body).Decode(&b) // parse json request body
@@ -84,7 +89,9 @@ func CreateBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 // UpdateBookHandler -
-func UpdateBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func UpdateBookHandler(w http.ResponseWriter, r *http.Request) {
+	db := database.GetDB()
+
 	update := models.Book{}
 	params := mux.Vars(r)
 	id := params["id"]
@@ -111,7 +118,9 @@ func UpdateBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 }
 
 // DeleteBookHandler -
-func DeleteBookHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func DeleteBookHandler(w http.ResponseWriter, r *http.Request) {
+	db := database.GetDB()
+
 	params := mux.Vars(r)
 	id := params["id"]
 	idInt, _ := strconv.Atoi(id)
