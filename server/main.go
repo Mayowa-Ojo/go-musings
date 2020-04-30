@@ -37,13 +37,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// fs := http.FileServer(http.Dir("static/")) // file handler
-	// http.Handle("/static/", http.StripPrefix("/static/", fs))
-
 	r := mux.NewRouter() // create mux router
 
+	fs := http.FileServer(http.Dir("./static")) // file handler
+	r.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fs))
+
 	// routes - using the new mux router
-	r.HandleFunc("/", rootHandler)
+	r.HandleFunc("/", handlers.RootHandler)
 
 	bookRouter := r.PathPrefix("/books").Subrouter() // create book router
 	bookRouter.HandleFunc("/", handlers.GetBooksHandler).Methods("GET")
@@ -55,13 +55,4 @@ func main() {
 	// http.Handle("/", r)
 	log.Printf("http server listening on port %v\n", addr)
 	log.Fatal(http.ListenAndServe(addr, r)) // pass the mux router to the listener
-}
-
-func rootHandler(w http.ResponseWriter, r *http.Request) {
-	// lp := filepath.Join("templates", "index.html")
-	// fp := filepath.Join("templates", filepath.Clean(r.URL.Path))
-
-	// tmpl, _ := template.ParseFiles(lp, fp)
-	// tmpl.ExecuteTemplate(w, "index", nil)
-	fmt.Fprintf(w, "Hello, you made a Request to %s\n", r.URL.Path)
 }
