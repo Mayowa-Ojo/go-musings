@@ -9,12 +9,16 @@ import (
 
 	"github.com/go-musings/server/database"
 	models "github.com/go-musings/server/database/models"
+	"github.com/go-musings/server/templates"
 	"github.com/gorilla/mux"
 )
 
 // RootHandler -
 func RootHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Hello, you made a Request to %s\n", r.URL.Path)
+	tmpl := templates.ParseTemplate("./templates/index.html")
+
+	tmpl.Execute(w, nil)
+	// fmt.Fprintf(w, "Hello, you made a Request to %s\n", r.URL.Path)
 }
 
 // GetBooksHandler -
