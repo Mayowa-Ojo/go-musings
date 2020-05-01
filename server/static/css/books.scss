@@ -1,0 +1,25 @@
+body {
+   background: rgb(195, 168, 194);
+   color: rgb(195, 168, 194);
+}
+
+.box {
+   width: 600px;
+   height: 500px; 
+   overflow-y: scroll;
+   margin-top: 6em;
+   background: rgb(72, 45, 71);
+
+   button {
+      &:hover {
+         background: yellow;
+         color: cyan;
+      }
+   }
+
+   .book-row .action a {
+      &:hover {
+         color: yellow;
+      }
+   }
+} 

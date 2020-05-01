@@ -1,0 +1,15 @@
+body {
+   background: rgb(72, 45, 71);
+}
+
+.box {
+   width: 420px !important;
+   margin-top: 15em;
+
+   button {
+      &:hover {
+         background: yellow;
+         color: cyan;
+      }
+   }
+} 
