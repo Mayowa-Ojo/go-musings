@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/go-musings/server/database"
 	models "github.com/go-musings/server/database/models"
@@ -15,7 +16,7 @@ import (
 
 // RootHandler -
 func RootHandler(w http.ResponseWriter, r *http.Request) {
-	tmpl := templates.ParseTemplate("./templates/index.html")
+	tmpl := templates.ParseTemplate("./templates/index.tpl")
 
 	tmpl.Execute(w, nil)
 	// fmt.Fprintf(w, "Hello, you made a Request to %s\n", r.URL.Path)
@@ -24,20 +25,29 @@ func RootHandler(w http.ResponseWriter, r *http.Request) {
 // GetBooksHandler -
 func GetBooksHandler(w http.ResponseWriter, r *http.Request) {
 	db := database.GetDB()
+	path := r.URL.Path
 
 	books, err := database.QueryRows(db)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	b, err := json.Marshal(books)
-	if err != nil {
-		log.Fatal(err)
+	if contains := strings.Contains(path, "api"); contains {
+		b, err := json.Marshal(books)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(b)
+
+		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(b)
+	tmpl := templates.ParseTemplate("./templates/books.tpl")
+
+	tmpl.Execute(w, books)
 }
 
 // GetBookHandler -
