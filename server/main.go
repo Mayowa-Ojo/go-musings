@@ -46,11 +46,16 @@ func main() {
 	r.HandleFunc("/", handlers.RootHandler)
 
 	bookRouter := r.PathPrefix("/books").Subrouter() // create book router
+	apiRouter := r.PathPrefix("/api/v1").Subrouter() // create api router
+
 	bookRouter.HandleFunc("/", handlers.GetBooksHandler).Methods("GET")
 	bookRouter.HandleFunc("/{id}", handlers.GetBookHandler).Methods("GET")
 	bookRouter.HandleFunc("/", handlers.CreateBookHandler).Methods("POST")
 	bookRouter.HandleFunc("/{id}", handlers.UpdateBookHandler).Methods("PUT")
 	bookRouter.HandleFunc("/{id}", handlers.DeleteBookHandler).Methods("DELETE")
+
+	apiRouter.HandleFunc("/books", handlers.GetBooksHandler).Methods("GET")
+	apiRouter.HandleFunc("/books/{id}", handlers.GetBookHandler).Methods("GET")
 
 	// http.Handle("/", r)
 	log.Printf("http server listening on port %v\n", addr)
