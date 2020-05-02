@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-musings/server/database"
 	"github.com/go-musings/server/handlers"
+	"github.com/go-musings/server/middleware"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 )
@@ -49,13 +50,16 @@ func main() {
 	apiRouter := r.PathPrefix("/api/v1").Subrouter() // create api router
 
 	bookRouter.HandleFunc("/", handlers.GetBooksHandler).Methods("GET")
+	bookRouter.HandleFunc("/edit/{id}", handlers.ShowFormHandler).Methods("GET")
+	bookRouter.HandleFunc("/new", handlers.ShowFormHandler).Methods("GET")
 	bookRouter.HandleFunc("/{id}", handlers.GetBookHandler).Methods("GET")
 	bookRouter.HandleFunc("/", handlers.CreateBookHandler).Methods("POST")
-	bookRouter.HandleFunc("/{id}", handlers.UpdateBookHandler).Methods("PUT")
-	bookRouter.HandleFunc("/{id}", handlers.DeleteBookHandler).Methods("DELETE")
+	bookRouter.HandleFunc("/{id}", middleware.MethodOverride(handlers.UpdateBookHandler)).Methods("PUT")
+	bookRouter.HandleFunc("/delete/{id}", handlers.DeleteBookHandler).Methods("GET") // using GET here because the CTA is an anchor tag
 
 	apiRouter.HandleFunc("/books", handlers.GetBooksHandler).Methods("GET")
 	apiRouter.HandleFunc("/books/{id}", handlers.GetBookHandler).Methods("GET")
+	apiRouter.HandleFunc("/{id}", handlers.DeleteBookHandler).Methods("DELETE")
 
 	// http.Handle("/", r)
 	log.Printf("http server listening on port %v\n", addr)
