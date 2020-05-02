@@ -1,19 +1,22 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 )
 
 // MethodOverride -
-func MethodOverride(f http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		method := r.FormValue("_method")
-
-		switch method {
-		case "PUT", "PATCH", "DELETE":
-			r.Method = method
+func MethodOverride(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "POST" {
+			method := r.FormValue("_method")
+			log.Println(method)
+			switch method {
+			case "PUT", "PATCH", "DELETE":
+				r.Method = method
+			}
 		}
 
-		f(w, r)
-	}
+		next.ServeHTTP(w, r)
+	})
 }
