@@ -54,7 +54,7 @@ func main() {
 	bookRouter.HandleFunc("/new", handlers.ShowFormHandler).Methods("GET")
 	bookRouter.HandleFunc("/{id}", handlers.GetBookHandler).Methods("GET")
 	bookRouter.HandleFunc("/", handlers.CreateBookHandler).Methods("POST")
-	bookRouter.HandleFunc("/{id}", middleware.MethodOverride(handlers.UpdateBookHandler)).Methods("PUT")
+	bookRouter.HandleFunc("/{id}", handlers.UpdateBookHandler).Methods("PUT")
 	bookRouter.HandleFunc("/delete/{id}", handlers.DeleteBookHandler).Methods("GET") // using GET here because the CTA is an anchor tag
 
 	apiRouter.HandleFunc("/books", handlers.GetBooksHandler).Methods("GET")
@@ -63,5 +63,5 @@ func main() {
 
 	// http.Handle("/", r)
 	log.Printf("http server listening on port %v\n", addr)
-	log.Fatal(http.ListenAndServe(addr, r)) // pass the mux router to the listener
+	log.Fatal(http.ListenAndServe(addr, middleware.MethodOverride(r))) // pass the mux router to the listener
 }
