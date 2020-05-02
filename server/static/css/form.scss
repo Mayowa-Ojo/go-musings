@@ -1,0 +1,22 @@
+body {
+   color: rgb(195, 168, 194);
+   background: rgb(72, 45, 71);
+}
+
+.box {
+   width: 420px;
+   margin-top: 12em;
+
+   form label {
+      &:first-child {
+         transform: translateX(-4.5em);
+      }
+      transform: translateX(-4em);
+   }
+   button {
+      &:hover {
+         background: yellow;
+         color: rgb(72, 45, 71);
+      }
+   }
+} 

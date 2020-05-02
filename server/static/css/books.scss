@@ -10,6 +10,17 @@ body {
    margin-top: 6em;
    background: rgb(72, 45, 71);
 
+   &::-webkit-scrollbar {
+      width: 10px;
+   }
+   &::-webkit-scrollbar-thumb {
+      background-color: rgb(72, 45, 71);
+      border-radius: 20px;
+      border: 2px solid yellow;
+   }
+   &::-webkit-scrollbar-track {
+      background: yellow;
+   }
    button {
       &:hover {
          background: yellow;
@@ -20,6 +31,14 @@ body {
    .book-row .action a {
       &:hover {
          color: yellow;
+      }
+   }
+
+   .header h1 {
+      span {
+         &:hover {
+            color: yellow;
+         }
       }
    }
 } 
