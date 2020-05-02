@@ -12,7 +12,7 @@
       {{if .Book }}
       <form class="text-center" action="{{ .Action }}" method="POST">
          <label class="block text-sm" for="title">Title</label>
-         <input type="hidden" name="_method" value="<{{ .Method }}">
+         <input type="hidden" name="_method" value="{{ .Method }}">
          <input class="mb-4 mt-2" type="text" value="{{ .Book.Title }}" name="title" id="title">
          <label class="block text-sm" for="author">Author</label>
          <input class="mb-4 mt-2" type="text" value="{{ .Book.Author }}" name="author" id="author">
