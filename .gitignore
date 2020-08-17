@@ -1,8 +1,4 @@
-cards/ 
-hello_world/
 .idea/
-structs/
-reduce/
-template_string/
 *.tmp
 .env
+_*
