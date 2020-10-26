@@ -18,7 +18,7 @@ import (
 //
 // Given a VPS represented as string s, return the nesting depth of s.
 
-// MaxDepth -
+// MaxDepth - calculates the maximum nesting depth of string s using custom filter, map and reduce HOFs
 func MaxDepth(s string) int {
 	if s == "" {
 		return 0
