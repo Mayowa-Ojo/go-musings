@@ -7,7 +7,8 @@ import (
 )
 
 func main() {
-	result := lib.MaxDepth("(()(()))")
+	testStr := "(()(()))"
+	result := lib.MaxDepth(testStr)
 
 	fmt.Printf("result: %d", result)
 }
